@@ -4,20 +4,28 @@ import { AppDataSource } from "./data-source";
 import { userInfoWizard } from "./scenes/registerScene";
 import "dotenv/config";
 import { User } from "./entity/User";
-import { configScene } from "./scenes/configScene";
+import { configActionWizard, configScene } from "./scenes/configScene";
+import ProgressBar = require("progress");
 
-const bot = new Telegraf(process.env.API_TOKEN);
-
+const bot = new Telegraf(process.env.API_TOKEN || "6911501212:AAFkvxg_G2sDfesUfrDB65oeU2P-82WUEf8" );
+const progress = new ProgressBar(':bar  :percent -Tiempo Estimado: :eta', {total : 50})
 const userRepository = AppDataSource.getRepository(User);
 //@ts-ignore
-const stage = new Scenes.Stage([userInfoWizard, configScene]);
+const stage = new Scenes.Stage([userInfoWizard, configScene, configActionWizard]);
 bot.use(session());
 bot.use(stage.middleware());
+
 
 const bootstrap = () => {
   AppDataSource.initialize()
     .then(async () => {
-      console.log("Bot iniciado y base de datos prendida");
+      const timer = setInterval(()=>{
+        progress.tick();
+        if(progress.complete){
+          console.log("La base de datos fue encendida");
+          clearInterval(timer)
+        }
+      }, 100)
       bot.start((ctx) => {});
 
       bot.command("register", async (ctx) => {
@@ -47,7 +55,6 @@ const bootstrap = () => {
         ctx.reply("Todos los datos fueron borrados de la base de datos!");
       });
       bot.command("config", (ctx) => {
-        console.log("Entre");
         //@ts-ignore
         ctx.scene.enter("Configuracion");
       });
