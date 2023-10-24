@@ -4,12 +4,13 @@ import { AppDataSource } from "./data-source";
 import { userInfoWizard } from "./scenes/registerScene";
 import "dotenv/config";
 import { User } from "./entity/User";
+import { configScene } from "./scenes/configScene";
 
 const bot = new Telegraf(process.env.API_TOKEN);
 
 const userRepository = AppDataSource.getRepository(User);
 //@ts-ignore
-const stage = new Scenes.Stage([userInfoWizard]);
+const stage = new Scenes.Stage([userInfoWizard, configScene]);
 bot.use(session());
 bot.use(stage.middleware());
 
@@ -45,8 +46,14 @@ const bootstrap = () => {
         });
         ctx.reply("Todos los datos fueron borrados de la base de datos!");
       });
+      bot.command("config", (ctx) => {
+        console.log("Entre");
+        //@ts-ignore
+        ctx.scene.enter("Configuracion");
+      });
       bot.launch();
     })
+
     .catch((error) => console.log(error));
 };
 

@@ -11,6 +11,17 @@ const configButtons = [
     {text: "Buscar a un Usuario", callback_data: "Find One" }
 ]
 
-const configKeyboard = Markup.inlineKeyboard(configButtons, {columns : 4})
+const configKeyboard = Markup.inlineKeyboard(configButtons, {columns : 2})
+
+
+const configScene = new Scenes.BaseScene('Configuracion');
+
+configScene.enter((ctx) => {
+    ctx.reply('Que deseas hacer?', configKeyboard)
+});
+
+
+
+export {configScene}
 
 
