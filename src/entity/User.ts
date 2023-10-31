@@ -10,13 +10,13 @@ export class User {
     nombre: string
 
     @Column()
-    telefono: string
-
-    @Column()
     sucursal : string
 
     @Column()
     horario : string
+
+    @Column()
+    email : string
 
     @Column({default: false})
     esPermanente : boolean

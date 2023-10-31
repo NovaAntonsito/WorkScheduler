@@ -37,25 +37,25 @@ const userInfoWizard = new Scenes.WizardScene(
         ctx.reply("En que horario estas?", HorarioKeyboard)
         return ctx.wizard.next()
     }else{
-        return;
+        ctx.reply("No es un email valido")
+        return ctx.wizard.back()
     }
   },
   (ctx) => {
     ctx.wizard.state.userInfo.horario = ctx.callbackQuery.data;
-    ctx.reply("Ingresa tu número de teléfono:");
-    return ctx.wizard.next();
+    ctx.wizard.next();
+    return ctx.wizard.steps[ctx.wizard.cursor](ctx);
   },
   async (ctx) => {
-    ctx.wizard.state.userInfo.telefono = ctx.message.text;
     
     const newUser = new User();
 
     newUser.nombre = ctx.from.first_name + " " + ctx.from.last_name;
 
+    newUser.email = ctx.wizard.state.userInfo.email;
+
     newUser.sucursal = ctx.wizard.state.userInfo.sucursal; 
    
-    newUser.telefono = ctx.wizard.state.userInfo.telefono;
-
     newUser.horario = ctx.wizard.state.userInfo.horario;
 
     ctx.reply("Gracias por proporcionar tu información.");
